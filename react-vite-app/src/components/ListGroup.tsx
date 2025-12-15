@@ -2,11 +2,14 @@ import { Fragment } from "react/jsx-runtime";
 import "./ListGroup.css";
 import { useState } from "react";
 
-// Each component instance has its own state
-function ListGroup() {
-  // All arrays have an index that we can access in the .map() method
-  let items = ["New York", "San Francisco", `Tokyo`, `London`, `Paris`];
+interface ListGroupProps {
+  items: string[];
+  heading: string;
+}
 
+// Each component instance has its own state
+// We can destruct our props in the function defintion
+function ListGroup({ items, heading }: ListGroupProps) {
   // Hook (this is the state hook, hooks let us tap into Reacts features)
   const [selectedIndex, setSelectedIndex] = useState(-1); // Using (variable, method) is convention here
 
@@ -18,7 +21,7 @@ function ListGroup() {
     // React Fragment lets you have many html tags in one return statement
     // Fragment can either use <></> or <Fragment></Fragment>
     <>
-      <h1>List</h1>
+      <h1>{heading}</h1>
       {message}
       <ul>
         {/* Javascript doesn't have for loops, so we have to use the .map() method */}
