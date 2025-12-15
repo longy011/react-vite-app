@@ -1,13 +1,17 @@
 import { Fragment } from "react/jsx-runtime";
 
 function ListGroup() {
-  const items = ["New York", "San Francisco", `Tokyo`, `London`, `Paris`];
+  let items = ["New York", "San Francisco", `Tokyo`, `London`, `Paris`];
+  items = [];
+
+  const message = items.length === 0 && <p>No item found</p>;
 
   return (
     // React Fragment lets you have many html tags in one return statement
     // Fragment can either use <></> or <Fragment></Fragment>
     <>
       <h1>List</h1>
+      {message}
       <ul>
         {/* Javascript doesn't have for loops, so we have to use the .map() method */}
         {/* The items.map(...) expression needs to be wrapped in braces*/}
