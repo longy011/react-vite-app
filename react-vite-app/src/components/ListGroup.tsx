@@ -1,17 +1,18 @@
 import { Fragment } from "react/jsx-runtime";
-import { MouseEvent } from "react";
+import "./ListGroup.css";
+import { useState } from "react";
 
+// Each component instance has its own state
 function ListGroup() {
   // All arrays have an index that we can access in the .map() method
   let items = ["New York", "San Francisco", `Tokyo`, `London`, `Paris`];
-  //   items = [];
+
+  // Hook (this is the state hook, hooks let us tap into Reacts features)
+  const [selectedIndex, setSelectedIndex] = useState(-1); // Using (variable, method) is convention here
 
   const message = items.length === 0 && <p>No item found</p>;
 
   // Event handler
-  // To handle event logic we should use a separate function within the component
-  // by adding : MouseEvent we have used type annotiation, and now we have autocompletion when we get props of event
-  const handleClick = (event: MouseEvent) => console.log(event);
 
   return (
     // React Fragment lets you have many html tags in one return statement
@@ -26,7 +27,13 @@ function ListGroup() {
         {/* Often when bring items from an API each item will have an id property item.id */}
         {items.map((item, index) => (
           // In react each element has a property called onClick, in this example we use an arrow function
-          <li key={item} onClick={handleClick}>
+          <li
+            className={selectedIndex === index ? "active" : "list-item"}
+            key={item}
+            onClick={() => {
+              setSelectedIndex(index);
+            }}
+          >
             {item}
           </li>
         ))}
