@@ -1,7 +1,7 @@
-import Message from './Message.tsx';
+import ListGroup from "./components/ListGroup";
 
 function App() {
-  return <div><Message /></div> // <Message></Message> Must always close, or use self closing syntax as used
+  return <div><ListGroup /></div> // <Message></Message> Must always close, or use self closing syntax as used
 }
 
 export default App;
