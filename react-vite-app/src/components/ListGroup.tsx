@@ -5,17 +5,16 @@ import { useState } from "react";
 interface ListGroupProps {
   items: string[];
   heading: string;
+  onSelectItem: (item: string) => void;
 }
 
 // Each component instance has its own state
 // We can destruct our props in the function defintion
-function ListGroup({ items, heading }: ListGroupProps) {
+function ListGroup({ items, heading, onSelectItem }: ListGroupProps) {
   // Hook (this is the state hook, hooks let us tap into Reacts features)
   const [selectedIndex, setSelectedIndex] = useState(-1); // Using (variable, method) is convention here
 
   const message = items.length === 0 && <p>No item found</p>;
-
-  // Event handler
 
   return (
     // React Fragment lets you have many html tags in one return statement
@@ -35,6 +34,7 @@ function ListGroup({ items, heading }: ListGroupProps) {
             key={item}
             onClick={() => {
               setSelectedIndex(index);
+              onSelectItem(item);
             }}
           >
             {item}
