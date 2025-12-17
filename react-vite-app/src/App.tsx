@@ -1,25 +1,26 @@
-import Alert from "./components/Alert";
-import ListGroup from "./components/ListGroup";
+import Layout from "./layout/Layout.tsx";
+import RainCloud from "./components/RainCloud.tsx";
+import woof from "./assets/woof.png";
 
 function App() {
-  let items = ["New York", "San Francisco", `Tokyo`, `London`, `Paris`];
-
-  // Event handler
-  const handleSelectItem = (item: string) => {
-    console.log(item);
-  };
-
   return (
-    <div>
-      <Alert>
-        Hello <span> World</span>
-      </Alert>
-      <ListGroup
-        items={items}
-        heading="Cities"
-        onSelectItem={handleSelectItem}
-      />
-    </div>
+    <>
+      <Layout>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            flexDirection: "column",
+            marginTop: 100,
+            marginBottom: 100,
+          }}
+        >
+          <RainCloud />
+          <img src={woof} alt="Woof" style={{ height: 200 }} />
+        </div>
+      </Layout>
+    </>
   );
 }
 
