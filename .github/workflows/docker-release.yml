@@ -5,6 +5,11 @@ on:
     tags:
       - '*'
   workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Tag to build (e.g. v0.0.1)'
+        required: false
+        default: ''
 
 permissions:
   contents: read
@@ -14,12 +19,27 @@ jobs:
   build:
     name: Build & Push Docker Image
     runs-on: ubuntu-latest
-    if: startsWith(github.ref, 'refs/tags/')
+    if: startsWith(github.ref, 'refs/tags/') || github.event_name == 'workflow_dispatch'
     outputs:
-      image-url: ${{ steps.image.outputs.url }}
+      image-url: ${{ steps.set-image.outputs.url }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Determine tag to build
+        id: determine
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            if [ -n "${{ github.event.inputs.tag }}" ]; then
+              echo "TAG=${{ github.event.inputs.tag }}" >> $GITHUB_ENV
+            else
+              echo "No tag provided via workflow_dispatch" >&2
+              exit 1
+            fi
+          else
+            echo "TAG=${{ github.ref_name }}" >> $GITHUB_ENV
+          fi
+          echo "Using TAG=${TAG}"
 
       - name: Authenticate to GCP
         uses: google-github-actions/auth@v1
@@ -46,12 +66,13 @@ jobs:
           push: true
           platforms: linux/amd64,linux/arm64
           tags: |
-            europe-west2-docker.pkg.dev/warm-sunlight-476809-n8/docker/react-vite-app:${{ github.ref_name }}
+            europe-west2-docker.pkg.dev/warm-sunlight-476809-n8/docker/react-vite-app:${{ env.TAG }}
+            europe-west2-docker.pkg.dev/warm-sunlight-476809-n8/docker/react-vite-app:sha-${{ github.sha }}
             europe-west2-docker.pkg.dev/warm-sunlight-476809-n8/docker/react-vite-app:latest
 
       - name: Set image URL
-        id: image
-        run: echo "url=europe-west2-docker.pkg.dev/warm-sunlight-476809-n8/docker/react-vite-app:${{ github.ref_name }}" >> $GITHUB_OUTPUT
+        id: set-image
+        run: echo "url=europe-west2-docker.pkg.dev/warm-sunlight-476809-n8/docker/react-vite-app:${{ env.TAG }}" >> $GITHUB_OUTPUT
 
   deploy:
     name: Deploy to Cloud Run
@@ -71,7 +92,7 @@ jobs:
       - name: Deploy to Cloud Run
         run: |
           gcloud run deploy react-vite-app \
-            --image ${{ needs.build.outputs.image-url }} \
+            --image "${{ needs.build.outputs.image-url }}" \
             --region europe-west2 \
             --platform managed \
             --no-allow-unauthenticated \
